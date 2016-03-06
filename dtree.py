@@ -24,3 +24,5 @@ n, bins, patches = plt.hist(lymph['class'], facecolor='green')
 plt.xlabel('class')
 plt.grid(True)
 plt.show()
+
+lymph = lymph['class']
