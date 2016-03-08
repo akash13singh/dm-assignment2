@@ -10,7 +10,7 @@ import subprocess
 from sklearn.metrics import zero_one_loss
 
 
-def visualize_tree(clf, feature_names, class_names):
+def visualize_tree(clf, feature_names, class_names,figure_index):
     """Create tree png using graphviz.
 
     Args
@@ -20,7 +20,7 @@ def visualize_tree(clf, feature_names, class_names):
     """
     with open("dt.dot", 'w') as f:
         tree.export_graphviz(clf, out_file=f,feature_names=feature_names, class_names=class_names, filled=True, rounded=True,  special_characters=True)
-    command = ["dot", "-Tpng", "dt.dot", "-o", "dt.png"]
+    command = ["dot", "-Tpng", "dt.dot", "-o", "dt"+str(figure_index)+".png"]
     try:
         subprocess.check_call(command)
     except:
@@ -46,17 +46,16 @@ lymph['class'] = y
 print(len(lymph))
 
 
-'''
+
 # histogram of class variable
 n, bins, patches = plt.hist(lymph['class'], facecolor='green')
 plt.xlabel('class')
 plt.grid(True)
 plt.show()
-'''
+
 #remove classes
 lymph = lymph[lymph['class'].isin([1,2])]
 print(len(lymph))
-
 
 
 plt.figure()
@@ -64,18 +63,15 @@ parallel_coordinates(lymph, 'class',colormap='gist_rainbow')
 plt.xticks(rotation='vertical')
 #plt.show()
 
-'''
-clf = tree.DecisionTreeClassifier()
-X_train, X_test, y_train, y_test = train_test_split(X, y)
-clf.fit(X_train, y_train)
-print("Training error =", zero_one_loss(y_train, clf.predict(X_train)))
-print("Test error =", zero_one_loss(y_test, clf.predict(X_test)))
-visualize_tree(clf,attribute_names,['1','2'])
-'''
+
 
 clf = tree.DecisionTreeClassifier()
-clf.fit(lymph.iloc[:,0:18],lymph.iloc[:,18:])
-visualize_tree(clf,attribute_names,['1','2'])
+for i in range(0,3):
+    X_train, X_test, y_train, y_test = train_test_split(lymph.iloc[:,0:18],lymph.iloc[:,18:])
+    clf.fit(X_train, y_train)
+    print("Training error =", zero_one_loss(y_train, clf.predict(X_train)))
+    print("Test error =", zero_one_loss(y_test, clf.predict(X_test)))
+    visualize_tree(clf,attribute_names,['1','2'],i)
 
 
 
