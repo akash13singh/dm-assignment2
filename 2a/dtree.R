@@ -6,7 +6,11 @@ for(i in 1:20) {
   train <- subset(dataset, sample == T)
   test <- subset(dataset, sample == F)
   
-  tree <- J48(class~., data = train, control = Weka_control(C=0.5))
+  tree <- J48(class~., data = train, control = Weka_control(C=0.2))
+  plot(tree)
+  tree
+  p <- as.party(tree)
+  depth(p)
   pred <- predict(tree, test)
   conf = table(pred, as.factor(test$class))
   loss <- 1 - sum(diag(conf))/nrow(test)
