@@ -1,0 +1,8 @@
+Cart Average error :0.204651162791
+Cart Variance of errors :0.00279069767442
+Extra Average error :0.233720930233
+Extra Variance of errors :0.00478501892915
+Cart Pruned Average error :0.21511627907
+Cart Pruned Variance of errors :0.00253515413737
+
+Process finished with exit code 0

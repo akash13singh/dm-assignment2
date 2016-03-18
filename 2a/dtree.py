@@ -8,7 +8,7 @@ from sklearn import tree
 from sklearn.cross_validation import train_test_split
 import subprocess
 from sklearn.metrics import zero_one_loss
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report,confusion_matrix
 import numpy as np
 
 
@@ -22,6 +22,7 @@ def build_tree(clf,type,i,X_train, X_test, y_train, y_test,attribute_names,class
     figure_name = type+"_"+str(i)
     visualize_tree(clf,attribute_names,class_names,figure_name)
     print(classification_report(  y_test,predicted_test ))
+    print(confusion_matrix(y_test,predicted_test))
     return zero_one_loss(y_test, predicted_test )
 
 def visualize_tree(clf, feature_names, class_names,figure_name):
@@ -74,7 +75,7 @@ print(len(lymph))
 
 plt.figure()
 parallel_coordinates(lymph, 'class',colormap='gist_rainbow')
-plt.xticks(rotation='vertical')
+plt.xticks(rotation=30)
 #plt.show()
 
 
@@ -84,16 +85,17 @@ class_names = ["metastases","malign lymph"]
 
 clf = tree.DecisionTreeClassifier()
 clf_extra = tree.ExtraTreeClassifier()
-clf_pruned_cart = tree.DecisionTreeClassifier(min_samples_leaf=5, max_depth=5)
+clf_pruned_cart = tree.DecisionTreeClassifier(min_samples_leaf=3, max_depth=5)
 test_errors_CART = []
 test_errors_Extra = []
 test_errors_cart_pruned = []
 
-for i in range(8):
-    X_train, X_test, y_train, y_test = train_test_split(lymph.iloc[:,0:18],lymph.iloc[:,18:],test_size=.2,random_state=seeds[i])
-    test_errors_CART.append(build_tree(clf,'cart',i,X_train, X_test, y_train, y_test,attribute_names,class_names))
-    test_errors_Extra.append(build_tree(clf_extra,'extra',i,X_train, X_test, y_train, y_test,attribute_names,class_names))
-    test_errors_cart_pruned.append(build_tree(clf_pruned_cart,'pruned_cart',i,X_train, X_test, y_train, y_test,attribute_names,class_names))
+for i in range(4):
+    X_train, X_test, y_train, y_test = train_test_split(lymph.iloc[:,0:18],lymph.iloc[:,18:],test_size=.3)
+    #test_errors_CART.append(build_tree(clf,'cart',i,X_train, X_test, y_train, y_test,attribute_names,class_names))
+    #test_errors_Extra.append(build_tree(clf_extra,'extra',i,X_train, X_test, y_train, y_test,attribute_names,class_names))
+    test_errors_cart_pruned.append(build_tree(clf_pruned_cart,'depth_cart',i,X_train, X_test, y_train, y_test,attribute_names,class_names))
+
 
 print("-----------------------------------------------------------")
 

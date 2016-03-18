@@ -1,6 +1,7 @@
 *.png
 *.dot
 *.py[cod]
+*.arff
 
 # C extensions
 *.so
