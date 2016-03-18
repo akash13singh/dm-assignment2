@@ -6,6 +6,7 @@ from sklearn.utils import resample
 from sklearn import tree
 import numpy as np
 from numpy import arange
+import sys
 
 def bootstrapping_score(classifier, dataset, true_labels, repeats):
     scores = []
@@ -28,8 +29,9 @@ def validation(classifier, dataset, true_labels, is_bootstrapping):
         return cross_validation.cross_val_score(classifier, dataset, true_labels, cv=10)
 
 def knn_evaluation():
+    print 'KNeighborsClassifier'
     np.random.seed(123)
-    dataset,true_labels = make_blobs(n_samples=1000, n_features=2)
+    dataset,true_labels = make_blobs(n_samples=10000, n_features=2)
     color = ['r-', 'b-']
     methods = [True, False]
 
@@ -62,6 +64,7 @@ def knn_evaluation():
     pyplot.show()
 
 def tree_evaluation():
+    print 'DecisionTreeClassifier'
     np.random.seed(123)
     dataset,true_labels = make_blobs(n_samples=10000, n_features=2)
     color = ['r-', 'b-']
@@ -89,11 +92,14 @@ def tree_evaluation():
         label = 'bootstrap' if methods[b] else 'cross-validation'
         pyplot.plot(range(2,16), misclassification_rates, color[b], label = label)
     
-    pyplot.title('Mis-classification rates of KNeighborsClassifier')
+    pyplot.title('Mis-classification rates of DecisionTreeClassifier')
     pyplot.xlabel('Values of k')
     pyplot.ylabel('Mis classification rates')
     pyplot.legend(loc = 'upper left')
     pyplot.show()
 
 if __name__ == '__main__':
-    tree_evaluation()
+    if sys.argv[1] == 'tree':
+        tree_evaluation()
+    else:
+        knn_evaluation()
