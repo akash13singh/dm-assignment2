@@ -40,7 +40,7 @@ def report(grid_scores, n_top=3):
         print("Mean validation score: {0:.3f} (std: {1:.3f})".format(
               score.mean_validation_score,
               np.std(score.cv_validation_scores)))
-        print(score.cv_validation_scores)
+        print("cross-validation scores "+str(score.cv_validation_scores))
         print("Parameters: {0}".format(score.parameters))
         print("")
 
@@ -77,9 +77,7 @@ def run():
 
 
     X_train, X_test, y_train, y_test= cv.train_test_split(X,y,stratify = y,test_size=.2,random_state=0)
-    #print("% of different classes in training data")
-    #for j in range(10):
-    #    print(str(j)+"  "+str(sum( list(  1 if i==j else 0 for i in y_train))/ len(y_train)))
+
 
     '''
     sss =  cv.StratifiedShuffleSplit(y, 1, test_size=0.2, random_state=0)
@@ -88,7 +86,7 @@ def run():
         X_train, X_test = X[train], X[test]
         y_train, y_test = y[train], y[test]
     for j in range(10):
-        print(str(j)+"  "+str(sum( list(  1 if i==j else 0 for i in y_test))/ len(y_testd)))
+        print(str(j)+"  "+str(sum( list(  1 if i==j else 0 for i in y_test))/ len(y_test)))
     exit(0)
 
     # linear_svm
@@ -103,13 +101,6 @@ def run():
     #runOptimization(random_search_lsvm, n_iter_search,n_iter_search,"Random Search","Linear Svm",X_train, y_train)
     '''
 
-    # param_dist_tree = {"max_depth": sp_randint(6, 30),
-    #                   "max_features": sp_randint(1, 10),
-    #                   "min_samples_split": sp_randint(1, 10),
-    #                   "min_samples_leaf": sp_randint(5, 20),
-    #                   "criterion": ["gini", "entropy"]
-    #                   }
-
 
 
     param_dist_tree = {"max_depth": sp_randint(5, 30),
@@ -118,9 +109,9 @@ def run():
                        "criterion": ["gini", "entropy"]
                       }
 
-
-    # random search with nested resampling/cv
     n_iter_search = 20
+    # random search with nested resampling/cv
+
     clf_tree1 = tree.DecisionTreeClassifier()
     random_search_tree1 = RandomizedSearchCV(clf_tree1, param_distributions=param_dist_tree,n_iter=n_iter_search, cv = 10)
     random_search_optimizer1 = runOptimization(random_search_tree1, n_iter_search,1,"Random Search with CV","Decision Tree",X_train, y_train)
@@ -131,17 +122,17 @@ def run():
 
     # random search with no rested resampling/cv
     #The mean validation score reported here is the error on test data
-    sss =  cv.StratifiedShuffleSplit(y_train, 1, test_size=0.2, random_state=0)
+    sss =  cv.StratifiedShuffleSplit(y, 1, test_size=0.2, random_state=0)
     clf_tree2 = tree.DecisionTreeClassifier()
     random_search_tree2 = RandomizedSearchCV(clf_tree2, param_distributions=param_dist_tree,n_iter=n_iter_search, cv = sss)
-    random_search_optimizer2 = runOptimization(random_search_tree2, n_iter_search,1,"Random Search without CV","Decision Tree",X_train, y_train)
+    random_search_optimizer2 = runOptimization(random_search_tree2, n_iter_search,1,"Random Search without CV","Decision Tree",X, y)
+    random_iteration2 , random_scores2 = getOptimizerScores(random_search_optimizer2)
     random_best2 = random_search_optimizer2.best_estimator_
 
 
-
-    param_grid_tree = {"max_depth": [5,10,15,20],
-                       "min_samples_split": [5,20,15, 20],
-                       "min_samples_leaf": [5,20,15,20,],
+    param_grid_tree = {"max_depth": [5,10,15],
+                       "min_samples_split": [5,20,15],
+                       "min_samples_leaf": [5,20,15,],
                        "criterion": ["gini", "entropy"]
                       }
     clf_tree3 = tree.DecisionTreeClassifier()
@@ -153,28 +144,28 @@ def run():
 
     plt.plot(grid_iteration,grid_scores,"r-",label="GridSearchScore")
     plt.plot(random_iteration1,random_scores1,"b-",label="RandomSearchScoreWithCV")
-
     plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
            ncol=2, mode="expand", borderaxespad=0.)
     plt.xticks(np.arange(0,len(grid_scores),2))
     plt.yticks(np.arange(.5,1,.02))
     plt.show()
 
+    '''
+    plt.plot(random_iteration2,random_scores2,"b-",label="RandomSearchScoresWithoutCV")
+    plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+           ncol=2, mode="expand", borderaxespad=0.)
+    plt.xticks(np.arange(0,len(random_scores2),2))
+    plt.yticks(np.arange(.5,1,.02))
+    plt.show()
+    '''
     print("------Test Evaluation for Random Search With CV-------")
     predicted_random1 = random_best1.predict(X_test)
     print("Test Error: "+str(zero_one_loss(y_test,predicted_random1)))
 
 
-    print("------Test Evaluation for Random Search Without CV-------")
-    predicted_random2 = random_best2.predict(X_test)
-    print("Test Error: "+str(zero_one_loss(y_test,predicted_random2)))
-
-
-
     print("------Test Evaluation for Grid Search-------")
     predicted_grid = grid_best.predict(X_test)
     print("Test Error: "+str(zero_one_loss(y_test,predicted_grid)))
-
 
 if __name__ == "__main__":
     run()
