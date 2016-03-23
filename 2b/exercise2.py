@@ -31,7 +31,7 @@ def validation(classifier, dataset, true_labels, is_bootstrapping):
 def knn_evaluation():
     print 'KNeighborsClassifier'
     np.random.seed(123)
-    dataset,true_labels = make_blobs(n_samples=10000, n_features=2)
+    dataset,true_labels = make_blobs(n_samples=1000, n_features=2)
     color = ['r-', 'b-']
     methods = [True, False]
 
@@ -66,7 +66,7 @@ def knn_evaluation():
 def tree_evaluation():
     print 'DecisionTreeClassifier'
     np.random.seed(123)
-    dataset,true_labels = make_blobs(n_samples=10000, n_features=2)
+    dataset,true_labels = make_blobs(n_samples=1000, n_features=2)
     color = ['r-', 'b-']
     methods = [True, False]
 

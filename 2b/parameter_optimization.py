@@ -1,4 +1,4 @@
-from openml.apiconnector import APIConnector
+#from openml.apiconnector import APIConnector
 import pandas as pd
 import os
 from sklearn import cross_validation as cv
@@ -26,6 +26,14 @@ def load_data(dataset_id):
 
     print("no. of samples :"+str(len(X)))
     return (X,y,attribute_names)
+
+def load_data_csv():
+    result = pd.read_csv('pendigits.csv', sep = ',')
+    X = result.iloc[:,0:16]
+    y = result['class']
+    attribute_names = X.columns.values.tolist()
+
+    return X, y, attribute_names
 
 def histogram(data,color):
     n, bins, patches = plt.hist(data, facecolor=color)
@@ -68,7 +76,8 @@ def getOptimizerScores(optimizer):
 
 
 def run():
-    X,y,attribute_names = load_data(32)
+    #X,y,attribute_names = load_data(32)
+    X,y,attribute_names = load_data_csv()
     print(attribute_names)
 
     #print("% of different classes in dataset")
