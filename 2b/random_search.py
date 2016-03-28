@@ -42,7 +42,7 @@ param_dist_tree = {"max_depth": sp_randint(5, 30),
 
 #function for parameter optimization on training data. Uses random search.
 def randomSearch(X,y):
-    random.seed(5)
+    random.seed(1)
     best_score = 0
     scores = []
     n_iter = 20
@@ -70,7 +70,6 @@ def randomSearch(X,y):
             best_score = score
             best_model = clf_tree
 
-
     print("best model has score %.4f and max_depth = %d, max_samples_split = %d, max_samples_leaf = %d and criterion =%s"%(best_score,best_depth,best_samples_split,best_samples_leaf,best_criterion))
     predicted_test = best_model.predict(X_test)
     predicted_train = best_model.predict(X_train)
@@ -80,8 +79,10 @@ def randomSearch(X,y):
     plt.plot(np.arange(1,n_iter+1,1),scores,"b-",label="RandomSearchScoresWithoutCV")
     plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
            ncol=2, mode="expand", borderaxespad=0.)
-    plt.xticks(np.arange(1,n_iter+1,2))
-    plt.yticks(np.arange(.5,1,.02))
+    plt.xticks(np.arange(1,n_iter+1,1))
+    plt.yticks(np.arange(.5,1.02,.02))
+    plt.xlabel("iteration #")
+    plt.ylabel("training set accuracy")
     plt.show()
 
 if __name__ == "__main__":
