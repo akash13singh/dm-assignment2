@@ -12,10 +12,10 @@ from sklearn.metrics import roc_auc_score, roc_curve, auc
 def create_data(num_samples,num_features):
 
     #return make_blobs(n_samples=num_samples,n_features=num_features)
-    return make_classification(n_samples=num_samples,n_features=num_features,n_redundant=0,random_state=347)
+    return make_classification(n_samples=num_samples,n_features=num_features,n_redundant=0,random_state=317)
 
 def run():
-    X,y = create_data(3000,2)
+    X,y = create_data(1000,2)
     print(X[1:10])
     print(y[1:10])
     print(y.shape)
