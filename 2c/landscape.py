@@ -76,7 +76,7 @@ def optimize_both(X_train, y_train, X_test, y_test, r, exponents):
 
 
 def plot_C_gamma(X_train, y_train, r, exponents):
-    param_grid = {'C': r,'gamma':r}
+    param_grid = {'C': list(reversed(r)),'gamma':r}
     auc_scores = auc_by_grid_search(X_train, y_train, param_grid)
     #for c in r:
     #    for gamma_value in r:
@@ -90,7 +90,7 @@ def plot_C_gamma(X_train, y_train, r, exponents):
     gridsize = len(r)^2
     plt.imshow(scores, interpolation='nearest', cmap=plt.cm.hot)
     plt.xticks(np.arange(len(r)), np.round(exponents), rotation=45)
-    plt.yticks(np.arange(len(r)), np.round(exponents))
+    plt.yticks(np.arange(len(r)), np.round(list(reversed(exponents))))
     plt.xlabel('Exponential values of gamma')
     plt.ylabel('Exponential values of C')
 
