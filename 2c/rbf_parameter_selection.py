@@ -42,17 +42,17 @@ def run():
     for i, score in enumerate(grid_scores):
 
         gamma = score.parameters['gamma']
-        clf = SVC(kernel="rbf",gamma=gamma)
+        clf = SVC(kernel="rbf",gamma=gamma,probability=True)
         clf.fit(X,y)
         Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
         Z = Z.reshape(xx.shape)
-        y_predicted = clf.predict(X)
+        y_predicted = clf.predict_proba(X)
         #print(score.cv_validation_scores)
-        print("(%d) γ=2^%d, C=%s, CV-Score = %.3f, accuracy=%.2f, AUC = %.3f" %(i+1,np.log2(gamma), "Default",score.mean_validation_score,accuracy_score(y,y_predicted),roc_auc_score(y,y_predicted)))
+        #print("(%d) γ=2^%d, C=%s, CV-Score = %.3f, accuracy=%.2f, AUC = %.3f" %(i+1,np.log2(gamma), "Default",score.mean_validation_score,accuracy_score(y,y_predicted),roc_auc_score(y,y_predicted)))
 
         # visualize decision function for these parameters
         plt.subplot(3, 4, i+1)
-        plt.title("(%d) γ=2^%d C=%s CV-Score = %.3f AUC = %.3f"  % (i+1,np.log2(gamma), "Default",score.mean_validation_score,roc_auc_score(y,y_predicted)), size='medium')
+        plt.title("(%d) γ=2^%d C=%s CV-Score = %.3f AUC = %.3f"  % (i+1,np.log2(gamma), "Default",score.mean_validation_score,roc_auc_score(y,y_predicted[:,1])), size='medium')
 
         # visualize parameter's effect on decision function
         plt.pcolormesh(xx, yy, -Z, cmap=plt.cm.RdBu)
@@ -69,16 +69,16 @@ def run():
 
     for i, score in enumerate(grid_scores2):
         C = score.parameters['C']
-        clf = SVC(kernel="rbf",C=C)
+        clf = SVC(kernel="rbf",C=C,probability=True)
         clf.fit(X,y)
         Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
         Z = Z.reshape(xx.shape)
-        y_predicted = clf.predict(X)
-        print("(%d) C=2^%d, γ=%s, CV-Score = %.3f, accuracy=%.2f, AUC = %.3f" % ((i+1)+6,np.log2(C), "Default",score.mean_validation_score,accuracy_score(y,y_predicted),roc_auc_score(y,y_predicted)))
+        y_predicted = clf.predict_proba(X)
+        #print("(%d) C=2^%d, γ=%s, CV-Score = %.3f, accuracy=%.2f, AUC = %.3f" % ((i+1)+6,np.log2(C), "Default",score.mean_validation_score,accuracy_score(y,y_predicted),roc_auc_score(y,y_predicted)))
 
         # visualize decision function for these parameters
         plt.subplot(3, 4, (i+1)+6)
-        plt.title("(%d) C=2^%d γ=%s CV-Score = %.3f AUC = %.3f" % ((i+1)+6,np.log2(C), "Default",score.mean_validation_score,roc_auc_score(y,y_predicted)), size='medium')
+        plt.title("(%d) C=2^%d γ=%s CV-Score = %.3f AUC = %.3f" % ((i+1)+6,np.log2(C), "Default",score.mean_validation_score,roc_auc_score(y,y_predicted[:,1])), size='medium')
 
         # visualize parameter's effect on decision function
         plt.pcolormesh(xx, yy, -Z, cmap=plt.cm.RdBu)

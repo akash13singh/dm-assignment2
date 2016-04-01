@@ -16,13 +16,10 @@ def create_data(num_samples,num_features):
 
 def run():
     X,y = create_data(1000,2)
-    print(X[1:10])
-    print(y[1:10])
-    print(y.shape)
     X_train,X_test,y_train,y_test = cv.train_test_split(X, y, test_size=.2)
-    linear_svm = SVC(kernel="linear")
-    rbf_svm = SVC(kernel="rbf")
-    poly_svm = SVC(kernel="poly",degree=3)
+    linear_svm = SVC(kernel="linear",probability=True)
+    rbf_svm = SVC(kernel="rbf",probability=True)
+    poly_svm = SVC(kernel="poly",degree=3,probability=True)
     classifier_names= ['linear','polynomial','rbf']
 
     # step size for mesh
@@ -31,22 +28,25 @@ def run():
     x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
     xx, yy = np.meshgrid(np.arange(x_min, x_max, h),np.arange(y_min, y_max, h))
-    
+    plt.figure(figsize=(10,12))
 
     for i,clf in enumerate((linear_svm,poly_svm,rbf_svm)):
-        scores = cv.cross_val_score(clf,X,y,cv =10)
+        scores_roc = cv.cross_val_score(clf,X,y,cv =10,scoring="roc_auc")
+        scores_accuracy = cv.cross_val_score(clf,X,y,cv =10)
         print("Mean Validation Score of with %s kernel: %0.2f (+/- %0.2f)" % (classifier_names[i],scores.mean(), scores.std() * 2))
 
-        clf.fit(X,y)
-        y_predicted = clf.predict(X)
-        print("AUC under ROC curve with %s kernel : %.2f"%(classifier_names[i],roc_auc_score(y,y_predicted)))
+        clf.fit(X,y,)
+        y_predicted = clf.predict_proba(X)
 
-        fpr,tpr,thresholds = roc_curve(y,y_predicted)
+        #exit(0)
+        #print("AUC under ROC curve with %s kernel : %.2f"%(classifier_names[i],roc_auc_score(y,y_predicted[:,1])))
+
+        fpr,tpr,thresholds = roc_curve(y,y_predicted[:,1])
         roc_auc = auc(fpr,tpr)
 
         plt.subplot(2,2,4)
         plt.subplots_adjust(wspace=0.4, hspace=0.4)
-        plt.plot(fpr, tpr, lw=1, label='ROC with %s kernel (AUC = %0.2f)' % (classifier_names[i], roc_auc))
+        plt.plot(fpr, tpr, lw=1, label='ROC with %s kernel (AUC = %0.2f)' % (classifier_names[i], scores.mean()))
 
 
         plt.subplot(2, 2, i + 1)
